@@ -1,14 +1,7 @@
+#🛰️ 👨‍🦱🎑🥪TEST
+---
 
-1. TEST
-2. qwjdiowjqoirtew
-3. 3jriowejoeijio
-4. 동해물과 백두산이
+![NewQCar-1162x766](https://github.com/ksh99-git/VITAS/assets/173671952/2d502516-5def-4340-9406-127b210cb099)
 
-- **ㅈㄷㅂㄷㅂ**
-- 동해물진짜 불편한데..
-- - 동
-  - 
-https://github.com/ksh99-git/VITAS/assets/173671952/003640c7-2aca-44bf-9639-fc557536f6a4
 
-![Loss Curve](https://github.com/ksh99-git/VITAS/assets/173671952/97367e56-b7f6-45ba-b03a-2beaa0f37a6a)
-![boundary](https://github.com/ksh99-git/VITAS/assets/173671952/78badeb3-49cb-4a30-b780-e330e07256e7)
+![Uploading 전체 구조도.png…]()
