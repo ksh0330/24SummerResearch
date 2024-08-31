@@ -26,7 +26,6 @@ class ViewTransformer:
         return transformed_points.reshape(-1, 2)
 
 class VideoMonitor(QWidget):
-
     def __init__(self, video_source):
         super().__init__()
         self.setWindowTitle("Video Monitor")
@@ -145,6 +144,7 @@ class VideoMonitor(QWidget):
         self.A_slope, self.B_slope = 0, 0
         self.av, self.bv = 1, 1
         self.A_v_list, self.B_v_list = [], []
+        self.a_list, self.b_list = [], []
 
         self.current_a_position = None
         self.current_b_position = None
@@ -351,15 +351,25 @@ class VideoMonitor(QWidget):
                             self.out_tracks['B'].add(track_id)
 
                     # 충돌 예측
-                    collision_status = self.evaluate_collision_risk()
-                    self.collision_label.setText(f"위험도: {collision_status}")
+                    if self.current_a_position and self.current_b_position is not None:
+                        if self.current_a_position >= 500 or self.current_b_position >= 500:
+                            collision_status = self.evaluate_collision_risk()
+                            self.collision_label.setText(f"위험도: {collision_status}")
 
-                    if collision_status == "위험":
-                        self.broadcast_message(collision_status)
-                    elif collision_status == "주의":
-                        self.broadcast_message(collision_status)
-                    else:
-                        self.broadcast_message("안전")
+                            if collision_status == "위험":
+                                self.broadcast_message(collision_status)
+                            elif collision_status == "주의":
+                                self.broadcast_message(collision_status)
+                            else:
+                                self.broadcast_message("안전")
+
+                        elif (self.current_a_position is None) != (self.current_b_position is None):
+                            collision_status = "주의"
+                        else:
+                            collision_status = "안전"
+
+                    if collision_status == "None":
+                        collision_status = "안전"
 
                 row_position = self.table_widget.rowCount()
                 self.table_widget.insertRow(row_position)
@@ -371,15 +381,22 @@ class VideoMonitor(QWidget):
         if self.out_time_a is not None:
             # 영역 벗어난 후 측정중(위험 상황 or 아닌 상황)
             # 벗어난 후 시간 계산
+
             if results and results[0].boxes.id is not None:
                 self.exit_times[(track_id, 'A')] = self.out_time_a + self.time_to_track_a
+
+                if track_id not in self.a_list:
+                    self.a_list.append(track_id)
+                    at = track_id
+
                 # 벗어난 이후
-                if current_time - self.exit_times[(track_id, 'A')] > 0:
+                if current_time - self.exit_times[(at, 'A')] > 0:
                     if collision_status == "안전" or collision_status == "주의":
-                        self.active_tracks['A'].discard(track_id)
-                        del self.exit_times[(track_id, 'A')]  # 안전 판단 후 시간 삭제
+                        self.active_tracks['A'].discard(at)
+                        del self.exit_times[(at, 'A')]  # 안전 판단 후 시간 삭제
                         self.out_time_a = None
                         self.current_a_position = None
+                        self.av = 1
                         print("A OUT => SAFE")
 
         if self.out_time_b is not None:
@@ -387,13 +404,19 @@ class VideoMonitor(QWidget):
             # 벗어난 후 시간 계산
             if results and results[0].boxes.id is not None:
                 self.exit_times[(track_id, 'B')] = self.out_time_b + self.time_to_track_b
+
+                if track_id not in self.a_list:
+                    self.a_list.append(track_id)
+                    bt = track_id
+
                 # 벗어난 이후
-                if current_time - self.exit_times[(track_id, 'B')] > 0:
+                if current_time - self.exit_times[(bt, 'B')] > 0:
                     if collision_status == "안전" or collision_status == "주의":
-                        self.active_tracks['B'].discard(track_id)
-                        del self.exit_times[(track_id, 'B')]  # 안전 판단 후 시간 삭제
+                        self.active_tracks['B'].discard(bt)
+                        del self.exit_times[(bt, 'B')]  # 안전 판단 후 시간 삭제
                         self.out_time_b = None
                         self.current_b_position = None
+                        self.av = 1
                         print("B OUT => SAFE")
 
         # 객체 둘 다 인식이 안되는 경우(둘 다 안전해서 벗어난 경우, 충돌해서 인식 안되는 경우)
