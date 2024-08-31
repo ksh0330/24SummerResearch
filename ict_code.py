@@ -8,6 +8,8 @@ from ultralytics import YOLO
 from collections import defaultdict, deque
 import torch
 import time
+import socket
+import threading
 
 class ViewTransformer:
     def __init__(self, source: np.ndarray, target: np.ndarray) -> None:
@@ -24,6 +26,7 @@ class ViewTransformer:
         return transformed_points.reshape(-1, 2)
 
 class VideoMonitor(QWidget):
+
     def __init__(self, video_source):
         super().__init__()
         self.setWindowTitle("Video Monitor")
@@ -32,6 +35,12 @@ class VideoMonitor(QWidget):
         # YOLO 모델 로드
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.model = YOLO("epoch52.pt").to(self.device)
+
+        # 서버 소켓 설정
+        self.server_host = '192.168.2.13'
+        self.server_port = 8878
+        self.clients = []
+        self.start_server()
 
         # Areas and colors
         self.areas = {
@@ -45,7 +54,7 @@ class VideoMonitor(QWidget):
         self.cap = cv.VideoCapture(video_source)
         self.cap.set(cv.CAP_PROP_FRAME_WIDTH, 1280)
         self.cap.set(cv.CAP_PROP_FRAME_HEIGHT, 736)
-        self.cap.set(cv.CAP_PROP_FPS,30)
+        self.cap.set(cv.CAP_PROP_FPS, 30)
         if not self.cap.isOpened():
             print("Error: Could not open video.")
             sys.exit()
@@ -158,9 +167,9 @@ class VideoMonitor(QWidget):
 
     def calculate_time_to_safe(self, speed):
         max_speed = 40  # 가장 빠른 속도
-        min_speed = 10   # 가장 느린 속도
-        min_time = 0.5    # 가장 빠를 때 추적 시간 (1초)
-        max_time = 5    # 가장 느릴 때 추적 시간 (5초)
+        min_speed = 10  # 가장 느린 속도
+        min_time = 0.5  # 가장 빠를 때 추적 시간 (1초)
+        max_time = 5  # 가장 느릴 때 추적 시간 (5초)
 
         if speed >= max_speed:
             return min_time
@@ -286,8 +295,6 @@ class VideoMonitor(QWidget):
                         trackA = self.predictA_history[track_id]
                         trackA.append(((transformed_pointA[0][0]), (transformed_pointA[0][1])))
                         pointsA = np.hstack(trackA).astype(np.int32).reshape((-1, 1, 2))
-                        #cv.polylines(frame, [pointsA], isClosed=False, color=self.BLUE, thickness=3)
-                        #self.trakcA_len = pointsA[-1][-1][1] - pointsA[0][0][1]
 
                         # A 영역 테이블 업데이트
                         row_position = self.a_area_table_widget.rowCount()
@@ -326,8 +333,6 @@ class VideoMonitor(QWidget):
                         trackB = self.predictB_history[track_id]
                         trackB.append(((transformed_pointB[0][0]), (transformed_pointB[0][1])))
                         pointsB = np.hstack(trackB).astype(np.int32).reshape((-1, 1, 2))
-                        #cv.polylines(frame, [pointsB], isClosed=False, color=self.BLUE, thickness=3)
-                        #self.trakcB_len = pointsB[-1][-1][1] - pointsB[0][0][1]
 
                         # B 영역 테이블 업데이트
                         row_position = self.b_area_table_widget.rowCount()
@@ -346,24 +351,15 @@ class VideoMonitor(QWidget):
                             self.out_tracks['B'].add(track_id)
 
                     # 충돌 예측
-                    if self.current_a_position and self.current_b_position is not None:
-                        if self.current_a_position >= 500 or self.current_b_position >= 500:
+                    collision_status = self.evaluate_collision_risk()
+                    self.collision_label.setText(f"위험도: {collision_status}")
 
-                            collision_status = self.evaluate_collision_risk()
-                            if collision_status == "위험":
-                                if self.current_a_position != self.current_b_position:
-                                    if self.current_a_speed > self.current_b_speed:
-                                        print("B 차량 정지 통신")
-                                    else:
-                                        print("A 차량 정지 통신")
-
-                        elif (self.current_a_position is None) != (self.current_b_position is None):
-                            collision_status = "주의"
-                        else:
-                            collision_status = "안전"
-
-
-                self.collision_label.setText(f"위험도: {collision_status}")
+                    if collision_status == "위험":
+                        self.broadcast_message(collision_status)
+                    elif collision_status == "주의":
+                        self.broadcast_message(collision_status)
+                    else:
+                        self.broadcast_message("안전")
 
                 row_position = self.table_widget.rowCount()
                 self.table_widget.insertRow(row_position)
@@ -415,10 +411,46 @@ class VideoMonitor(QWidget):
         qt_image = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
         self.video_label.setPixmap(QPixmap.fromImage(qt_image))
 
+    def start_server(self):
+        server_thread = threading.Thread(target=self._start_server_thread)
+        server_thread.start()
+
+    def _start_server_thread(self):
+        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        server.bind((self.server_host, self.server_port))
+        server.listen(5)
+        print(f"[LISTENING] Server is listening on {self.server_host}:{self.server_port}")
+
+        while True:
+            client_socket, addr = server.accept()
+            client_handler = threading.Thread(target=self.handle_client, args=(client_socket, addr))
+            client_handler.start()
+
+    def broadcast_message(self, message):
+        for client in self.clients:
+            try:
+                client.sendall(message.encode('utf-8'))
+            except:
+                pass
+
+    def handle_client(self, client_socket, addr):
+        print(f"[NEW CONNECTION] {addr} connected.")
+        self.clients.append(client_socket)
+        try:
+            while True:
+                message = client_socket.recv(1024).decode('utf-8')
+                if not message:
+                    break
+                print(f"[{addr}] {message}")
+        finally:
+            print(f"[DISCONNECTED] {addr} disconnected.")
+            self.clients.remove(client_socket)
+            client_socket.close()
+
     def closeEvent(self, event):
         self.cap.release()
         super().closeEvent(event)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
