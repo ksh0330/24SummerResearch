@@ -31,17 +31,17 @@ class VideoMonitor(QWidget):
         self.setWindowTitle("Video Monitor")
         self.setGeometry(100, 100, 1800, 720)
 
-        # YOLO 모델 로드
+        # YOLO load
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.model = YOLO("epoch52.pt").to(self.device)
 
-        # 서버 소켓 설정
+        # sever socket
         self.server_host = '192.168.2.13'
         self.server_port = 8878
         self.clients = []
         self.start_server()
 
-        # Areas and colors
+        # Areas and colors (hard coding...)
         self.areas = {
             "B": [(1116, 52), (775, 251), (966, 337), (1244, 87)],
             "A": [(74, 85), (361, 337), (548, 251), (200, 51)]
@@ -64,64 +64,64 @@ class VideoMonitor(QWidget):
 
         # Play/Pause button
         self.is_paused = False
-        self.play_pause_button = QPushButton("긴급상황접수", self)
+        self.play_pause_button = QPushButton("Emergency", self)
         self.play_pause_button.setGeometry(1300, 650, 200, 60)
         self.play_pause_button.clicked.connect(self.toggle_play_pause)
 
-        # BBox와 객체 정보 표시 토글 버튼
+        # BBox & Toggle
         self.show_bbox = True
-        self.toggle_button = QPushButton("객체 BBOX\nOFF", self)
+        self.toggle_button = QPushButton("Object BBOX\nOFF", self)
         self.toggle_button.setGeometry(1550, 650, 200, 60)
         self.toggle_button.clicked.connect(self.toggle_display)
 
         self.text_table_widget = QLabel(self)
         self.text_table_widget.setGeometry(1300, 0, 300, 20)
-        self.text_table_widget.setText("모든 객체 정보")
+        self.text_table_widget.setText("All of Inform")
 
         # Table widget to display object information
         self.table_widget = QTableWidget(self)
         self.table_widget.setColumnCount(4)
-        self.table_widget.setHorizontalHeaderLabels(["Track ID", "Class", "Confidence", "위치(X,Y)"])
+        self.table_widget.setHorizontalHeaderLabels(["Track ID", "Class", "Confidence", "Posi(X,Y)"])
         self.table_widget.setGeometry(1300, 20, 420, 100)
 
         self.text_a_area_table_widget = QLabel(self)
         self.text_a_area_table_widget.setGeometry(1300, 140, 300, 20)
-        self.text_a_area_table_widget.setText("A 영역 내 객체 정보")
+        self.text_a_area_table_widget.setText("Inform in Area A")
 
-        # A영역에 있는 객체 정보 테이블 위젯 (두 번째 표)
+        # Table widget to display object information in A
         self.a_area_table_widget = QTableWidget(self)
         self.a_area_table_widget.setColumnCount(4)
-        self.a_area_table_widget.setHorizontalHeaderLabels(["Track ID", "Class", "위치(x,y)", "속도(km/h)"])
+        self.a_area_table_widget.setHorizontalHeaderLabels(["Track ID", "Class", "Posi(x,y)", "Speed(km/h)"])
         self.a_area_table_widget.setGeometry(1300, 160, 420, 100)
 
         self.text_b_area_table_widget = QLabel(self)
         self.text_b_area_table_widget.setGeometry(1300, 280, 300, 20)
-        self.text_b_area_table_widget.setText("B 영역 내 객체 정보")
+        self.text_b_area_table_widget.setText("Inform in Area B")
 
-        # B영역에 있는 객체 정보 테이블 위젯 (세 번째 표)
+        # Table widget to display object information in B
         self.b_area_table_widget = QTableWidget(self)
         self.b_area_table_widget.setColumnCount(4)
-        self.b_area_table_widget.setHorizontalHeaderLabels(["Track ID", "Class", "위치(x,y)", "속도(km/h)"])
+        self.b_area_table_widget.setHorizontalHeaderLabels(["Track ID", "Class", "Posi(x,y)", "Speed(km/h)"])
         self.b_area_table_widget.setGeometry(1300, 300, 420, 100)
 
-        # 충돌 예측 라벨
+        # Collision label
         self.collision_label = QLabel(self)
         self.collision_label.setGeometry(1300, 420, 500, 50)
         self.collision_label.setStyleSheet("font-size: 30px; color: red;")
-        self.collision_label.setText("위험도: 안전")
+        self.collision_label.setText("Risk: Safe")
 
-        # 텍스트 디스플레이 라벨 -> 통신 상태 표시로 전환
+        # test_label
         self.text_label = QLabel(self)
         self.text_label.setGeometry(1300, 500, 500, 50)
         self.text_label.setStyleSheet("font-size: 20px;")
-        self.text_label.setText("객체 탐지 중...")
+        self.text_label.setText("Object detection...")
 
         # Timer setup for frame updates
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_frame)
         self.timer.start(30)
 
-        # 마지막 프레임 저장
+        # Save last frame
         self.last_frame = None
         self.last_results = None
 
@@ -151,25 +151,22 @@ class VideoMonitor(QWidget):
         self.current_a_speed = None
         self.current_b_speed = None
 
-        # 객체의 출구 시간을 기록하기 위한 딕셔너리
+        # dic for exit time
         self.exit_times = {}
 
-        # 각 영역의 현재 트랙킹 중인 객체 ID를 저장하는 딕셔너리
+        # dic for tracking id
         self.active_tracks = {'A': set(), 'B': set()}
 
-        # 각 영역에서 나온 객체의 ID를 저장하는 딕셔너리
+        # dic for out id
         self.out_tracks = {'A': set(), 'B': set()}
         self.out_time_a = None
         self.out_time_b = None
 
-        self.trakcA_len = None
-        self.trakcB_len = None
-
     def calculate_time_to_safe(self, speed):
-        max_speed = 40  # 가장 빠른 속도
-        min_speed = 10  # 가장 느린 속도
-        min_time = 0.5  # 가장 빠를 때 추적 시간 (1초)
-        max_time = 5  # 가장 느릴 때 추적 시간 (5초)
+        max_speed = 40  # Fast Speed
+        min_speed = 10  # Slow Speed
+        min_time = 0.5  # Fast time
+        max_time = 5  # Slow time
 
         if speed >= max_speed:
             return min_time
@@ -182,19 +179,19 @@ class VideoMonitor(QWidget):
     def toggle_play_pause(self):
         if self.is_paused:
             self.timer.start(0)
-            self.play_pause_button.setText("긴급상황접수")
+            self.play_pause_button.setText("Emergency")
 
         else:
             self.timer.stop()
-            self.play_pause_button.setText("긴급상황\n접수 취소")
+            self.play_pause_button.setText("Emergency\nCancel")
         self.is_paused = not self.is_paused
 
     def toggle_display(self):
         self.show_bbox = not self.show_bbox
         if self.show_bbox:
-            self.toggle_button.setText("객체 BBOX\nOFF")
+            self.toggle_button.setText("Object BBOX\nOFF")
         else:
-            self.toggle_button.setText("객체 BBOX\nON")
+            self.toggle_button.setText("Object BBOX\nON")
 
         if self.last_frame is not None and self.last_results is not None:
             self.update_display(self.last_frame, self.last_results)
@@ -202,12 +199,12 @@ class VideoMonitor(QWidget):
     def update_frame(self):
         ret, frame = self.cap.read()
         if ret:
-            # YOLO 모델을 통해 객체 추적
+            # YOLO Object Tracking 
             results = self.model.track(frame, conf=0.6, imgsz=(736, 1280), persist=True, verbose=False)
             self.last_frame = frame.copy()
             self.last_results = results
 
-            # 화면 업데이트
+            # update display
             self.update_display(frame, results)
         else:
             self.cap.release()
@@ -224,11 +221,11 @@ class VideoMonitor(QWidget):
             distance = abs(self.current_a_position - self.current_b_position)
 
             if distance < 120:
-                return "위험"
+                return "Danger"
             elif distance < 350:
-                return "주의"
+                return "Warn"
             else:
-                return "안전"
+                return "Safe"
 
     def draw_tracking_path(self, frame, track_history, color=(0, 255, 0)):
         for track_id, points in track_history.items():
@@ -241,13 +238,13 @@ class VideoMonitor(QWidget):
         self.a_area_table_widget.setRowCount(0)
         self.b_area_table_widget.setRowCount(0)
 
-        collision_status = "안전"
+        collision_status = "Safe"
         current_time = time.time()
 
         cv.polylines(frame, [np.array(self.areas['A'], np.int32)], True, self.RED, 1)
         cv.polylines(frame, [np.array(self.areas['B'], np.int32)], True, self.RED, 1)
 
-        # 각 객체에 대해 BBox 그리기
+        # Drawing BBox
         if results and results[0].boxes.id is not None:
             boxes = results[0].boxes.xyxy.cpu().numpy()
             boxes_C = results[0].boxes.xywh.cpu().numpy()
@@ -270,7 +267,7 @@ class VideoMonitor(QWidget):
                 transformed_textB = f'({int(transformed_pointB[0][0])}, {int(transformed_pointB[0][1])})'
 
                 if self.show_bbox:
-                    # A와 B 영역 내에 있는지 확인
+                    # Check object in Area
                     in_A = cv.pointPolygonTest(np.array(self.areas['A'], np.int32), (x, y), False) >= 0
                     in_B = cv.pointPolygonTest(np.array(self.areas['B'], np.int32), (x, y), False) >= 0
 
@@ -284,7 +281,7 @@ class VideoMonitor(QWidget):
 
                         self.active_tracks['A'].add(track_id)
 
-                        # A 영역에서의 속도 계산
+                        # Cal Speed in A
                         self.trackmA_history[track_id].append(transformed_pointA)
                         self.A_v_list.append(int(transformed_pointA[0][-1]))
                         self.A_slope = round(abs(self.A_v_list[-1] - self.A_v_list[0]) / len(self.A_v_list), 2)
@@ -296,7 +293,7 @@ class VideoMonitor(QWidget):
                         trackA.append(((transformed_pointA[0][0]), (transformed_pointA[0][1])))
                         pointsA = np.hstack(trackA).astype(np.int32).reshape((-1, 1, 2))
 
-                        # A 영역 테이블 업데이트
+                        # Table update in A
                         row_position = self.a_area_table_widget.rowCount()
                         self.a_area_table_widget.insertRow(row_position)
                         self.a_area_table_widget.setItem(row_position, 0, QTableWidgetItem(str(int(track_id))))
@@ -307,7 +304,7 @@ class VideoMonitor(QWidget):
                         self.time_to_track_a = self.calculate_time_to_safe(self.av)
 
                     elif track_id in self.active_tracks['A']:
-                        # 객체가 A 영역을 벗어났을 때
+                        # When object out of A
                         if self.out_time_a is None:
                             self.out_time_a = current_time
                             self.out_tracks['A'].add(track_id)
@@ -322,7 +319,7 @@ class VideoMonitor(QWidget):
 
                         self.active_tracks['B'].add(track_id)
 
-                        # B 영역에서의 속도 계산
+                        # Cal speed in B
                         self.trackmB_history[track_id].append(transformed_pointB)
                         self.B_v_list.append(int(transformed_pointB[0][1]))
                         self.B_slope = round(abs(self.B_v_list[-1] - self.B_v_list[0]) / len(self.B_v_list), 2)
@@ -334,7 +331,7 @@ class VideoMonitor(QWidget):
                         trackB.append(((transformed_pointB[0][0]), (transformed_pointB[0][1])))
                         pointsB = np.hstack(trackB).astype(np.int32).reshape((-1, 1, 2))
 
-                        # B 영역 테이블 업데이트
+                        # Table update in B
                         row_position = self.b_area_table_widget.rowCount()
                         self.b_area_table_widget.insertRow(row_position)
                         self.b_area_table_widget.setItem(row_position, 0, QTableWidgetItem(str(int(track_id))))
@@ -345,31 +342,31 @@ class VideoMonitor(QWidget):
                         self.time_to_track_b = self.calculate_time_to_safe(self.bv)
 
                     elif track_id in self.active_tracks['B']:
-                        # 객체가 B 영역을 벗어났을 때
+                        # When object out of B
                         if self.out_time_b is None:
                             self.out_time_b = current_time
                             self.out_tracks['B'].add(track_id)
 
-                    # 충돌 예측
+                    # Predict collision
                     if self.current_a_position and self.current_b_position is not None:
                         if self.current_a_position >= 500 or self.current_b_position >= 500:
                             collision_status = self.evaluate_collision_risk()
-                            self.collision_label.setText(f"위험도: {collision_status}")
+                            self.collision_label.setText(f"Risk: {collision_status}")
 
-                            if collision_status == "위험":
+                            if collision_status == "Danger":
                                 self.broadcast_message(collision_status)
-                            elif collision_status == "주의":
+                            elif collision_status == "Warn":
                                 self.broadcast_message(collision_status)
                             else:
-                                self.broadcast_message("안전")
+                                self.broadcast_message("Safe")
 
                         elif (self.current_a_position is None) != (self.current_b_position is None):
-                            collision_status = "주의"
+                            collision_status = "Warn"
                         else:
-                            collision_status = "안전"
+                            collision_status = "Safe"
 
                     if collision_status == "None":
-                        collision_status = "안전"
+                        collision_status = "Safe"
 
                 row_position = self.table_widget.rowCount()
                 self.table_widget.insertRow(row_position)
@@ -379,9 +376,7 @@ class VideoMonitor(QWidget):
                 self.table_widget.setItem(row_position, 3, QTableWidgetItem(f'({x}, {y})'))
 
         if self.out_time_a is not None:
-            # 영역 벗어난 후 측정중(위험 상황 or 아닌 상황)
-            # 벗어난 후 시간 계산
-
+            # estimate out of area A
             if results and results[0].boxes.id is not None:
                 self.exit_times[(track_id, 'A')] = self.out_time_a + self.time_to_track_a
 
@@ -389,19 +384,18 @@ class VideoMonitor(QWidget):
                     self.a_list.append(track_id)
                     at = track_id
 
-                # 벗어난 이후
+                # out of area
                 if current_time - self.exit_times[(at, 'A')] > 0:
-                    if collision_status == "안전" or collision_status == "주의":
+                    if collision_status == "Safe" or collision_status == "Warn":
                         self.active_tracks['A'].discard(at)
-                        del self.exit_times[(at, 'A')]  # 안전 판단 후 시간 삭제
+                        del self.exit_times[(at, 'A')]  # Safe and del time
                         self.out_time_a = None
                         self.current_a_position = None
                         self.av = 1
                         print("A OUT => SAFE")
 
         if self.out_time_b is not None:
-            # 영역 벗어난 후 측정중(위험 상황 or 아닌 상황)
-            # 벗어난 후 시간 계산
+            # estimate out of area B
             if results and results[0].boxes.id is not None:
                 self.exit_times[(track_id, 'B')] = self.out_time_b + self.time_to_track_b
 
@@ -409,20 +403,20 @@ class VideoMonitor(QWidget):
                     self.a_list.append(track_id)
                     bt = track_id
 
-                # 벗어난 이후
+                # out of area 
                 if current_time - self.exit_times[(bt, 'B')] > 0:
-                    if collision_status == "안전" or collision_status == "주의":
+                    if collision_status == "Safe" or collision_status == "Warn":
                         self.active_tracks['B'].discard(bt)
-                        del self.exit_times[(bt, 'B')]  # 안전 판단 후 시간 삭제
+                        del self.exit_times[(bt, 'B')]  # Safe and del time
                         self.out_time_b = None
                         self.current_b_position = None
                         self.av = 1
                         print("B OUT => SAFE")
 
-        # 객체 둘 다 인식이 안되는 경우(둘 다 안전해서 벗어난 경우, 충돌해서 인식 안되는 경우)
+        # Object detect nothing
         if results and results[0].boxes.id is None:
             if self.out_time_a and self.out_time_b is not None:
-                if collision_status == "위험":
+                if collision_status == "Danger":
                     print("CRASH")
             else:
                 print("NO CAR")
