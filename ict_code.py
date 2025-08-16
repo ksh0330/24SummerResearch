@@ -31,7 +31,7 @@ class VideoMonitor(QWidget):
         self.setWindowTitle("Video Monitor")
         self.setGeometry(100, 100, 1800, 720)
 
-        # YOLO load
+        # Custom YOLO load
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.model = YOLO("epoch52.pt").to(self.device)
 
