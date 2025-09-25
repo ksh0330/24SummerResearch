@@ -1,84 +1,44 @@
 [34;42m.[00m
 ├── [01;32m24SummerResearch_tree.txt[00m
-├── [01;32m24SummerResearch_tree_v2.txt[00m
 ├── [01;32mREADME.md[00m
-├── [34;42marchive[00m
-│   ├── [34;42mlegacy[00m
-│   └── [34;42mprototypes[00m
 ├── [34;42mcode[00m
-│   ├── [01;32m__init__.py[00m
-│   ├── [34;42mclassifiers[00m
-│   │   ├── [34;42mgru[00m
-│   │   ├── [34;42minception_v3[00m
-│   │   ├── [34;42mmlp[00m
-│   │   │   ├── [01;32m__init__.py[00m
-│   │   │   ├── [34;42mfeature_extractors[00m
-│   │   │   │   └── [01;32m__init__.py[00m
-│   │   │   └── [01;32mtrain_mlp_classifier.py[00m
-│   │   └── [34;42mvideo[00m
 │   ├── [34;42mdetectors[00m
 │   │   └── [01;32mict_yolo_runner.py[00m
-│   ├── [34;42mfeatures[00m
-│   ├── [34;42mgeometry[00m
 │   ├── [34;42mmlp[00m
-│   │   ├── [34;42mFeatureExtractor[00m
+│   │   ├── [34;42mfeature_extractors[00m
 │   │   │   ├── [01;32m(Danger)mp4_to_csv.py[00m
 │   │   │   ├── [01;32m(Safe)mp4_to_csv.py[00m
 │   │   │   ├── [01;32m(Warn)mp4_to_csv.py[00m
 │   │   │   ├── [01;32mA,B_Predict_estimate_mp4_to_csv.py[00m
 │   │   │   └── [01;32mA,B_Predict_estimate_remove_avgV_T(0609).py[00m
-│   │   └── [01;32m__init__.py[00m
-│   ├── [34;42mrealtime[00m
-│   ├── [34;42mscripts[00m
+│   │   └── [01;32mtrain_mlp_classifier.py[00m
 │   ├── [34;42mspeed[00m
-│   │   ├── [01;32m__init__.py[00m
 │   │   └── [01;32mmonitor_speed.py[00m
-│   ├── [34;42mspeed_estimation[00m
-│   │   ├── [01;32mGPU_check.py[00m
-│   │   ├── [01;32mREADME.md[00m
-│   │   ├── [34;42mdata[00m
-│   │   │   ├── [01;32mDCU_10.mp4[00m
-│   │   │   ├── [01;32mDCU_20.mp4[00m
-│   │   │   └── [01;32mDCU_30.mp4[00m
-│   │   ├── [01;32mrequirements.txt[00m
-│   │   ├── [34;42mtest_code[00m
-│   │   │   ├── [01;32mDCU_up.py[00m
-│   │   │   ├── [01;32mHRC_back.py[00m
-│   │   │   ├── [01;32mcop.py[00m
-│   │   │   ├── [01;32mdcu_refactored.py[00m
-│   │   │   ├── [01;32mfood.py[00m
-│   │   │   ├── [01;32mhrc.py[00m
-│   │   │   ├── [01;32mict_code(0831).py[00m
-│   │   │   ├── [01;32mict_code.py[00m
-│   │   │   ├── [01;32mmac.py[00m
-│   │   │   ├── [01;32mmedical_real.py[00m
-│   │   │   ├── [01;32mpy_test_316.py[00m
-│   │   │   ├── [01;32mreal_test.py[00m
-│   │   │   └── [01;32mtest3.py[00m
-│   │   ├── [01;32mtrack_and_estimate.py[00m
-│   │   └── [01;32myolov8s.pt[00m
-│   ├── [34;42mutils[00m
-│   │   ├── [01;32m__init__.py[00m
-│   │   └── [01;32mpaths.py[00m
-│   └── [01;32m{utils,detectors,geometry,speed,realtime,features,classifiers,[00m
-├── [34;42mcompetition[00m
-├── [34;42mconfigs[00m
-│   └── [01;32mpaths.yaml[00m
-├── [34;42mdatasets[00m
-│   ├── [34;42mclassifiers[00m
-│   │   ├── [34;42mmlp_csv[00m
-│   │   └── [34;42mvideo[00m
-│   │       ├── [34;42mtest[00m
-│   │       ├── [34;42mtrain[00m
-│   │       └── [34;42mvalidation[00m
-│   ├── [34;42mspeed[00m
 │   └── [34;42mspeed_estimation[00m
-│       ├── [01;32mDCU_10.mp4[00m
-│       ├── [01;32mDCU_20.mp4[00m
-│       └── [01;32mDCU_30.mp4[00m
+│       ├── [01;32mGPU_check.py[00m
+│       ├── [01;32mREADME.md[00m
+│       ├── [34;42mdata[00m
+│       │   ├── [01;32mDCU_10.mp4[00m
+│       │   ├── [01;32mDCU_20.mp4[00m
+│       │   └── [01;32mDCU_30.mp4[00m
+│       ├── [01;32mrequirements.txt[00m
+│       ├── [34;42mtest_code[00m
+│       │   ├── [01;32mDCU_up.py[00m
+│       │   ├── [01;32mHRC_back.py[00m
+│       │   ├── [01;32mcop.py[00m
+│       │   ├── [01;32mdcu_refactored.py[00m
+│       │   ├── [01;32mfood.py[00m
+│       │   ├── [01;32mhrc.py[00m
+│       │   ├── [01;32mict_code(0831).py[00m
+│       │   ├── [01;32mict_code.py[00m
+│       │   ├── [01;32mmac.py[00m
+│       │   ├── [01;32mmedical_real.py[00m
+│       │   ├── [01;32mpy_test_316.py[00m
+│       │   ├── [01;32mreal_test.py[00m
+│       │   └── [01;32mtest3.py[00m
+│       ├── [01;32mtrack_and_estimate.py[00m
+│       └── [01;32myolov8s.pt[00m
 ├── [34;42mdocs[00m
-│   ├── [34;42mjournal[00m
-│   ├── [34;42mlabnotes[00m
 │   ├── [34;42mmisc[00m
 │   │   ├── [34;42mEx영상[00m
 │   │   │   ├── [34;42m실도로 길이별(20~50M) 속도추정(30kmh)[00m
@@ -800,50 +760,6 @@
 │   │           └── [01;32mREAL_road_distance_50.py[00m
 │   ├── [34;42mmisc_leftover[00m
 │   │   ├── [01;32mNVIDIA System Information 09-10-2025 14-24-44.txt[00m
-│   │   ├── [34;42m공모전[00m
-│   │   │   ├── [34;42mAIoT[00m
-│   │   │   │   ├── [01;32mAIOT 발표 시연영상.mp4[00m
-│   │   │   │   ├── [34;42mAIOT_발표자료[00m
-│   │   │   │   │   ├── [01;32m001.png[00m
-│   │   │   │   │   ├── [01;32m002.png[00m
-│   │   │   │   │   ├── [01;32m003.png[00m
-│   │   │   │   │   ├── [01;32m004.png[00m
-│   │   │   │   │   ├── [01;32m005.png[00m
-│   │   │   │   │   ├── [01;32m006.png[00m
-│   │   │   │   │   ├── [01;32m007.png[00m
-│   │   │   │   │   ├── [01;32m008.png[00m
-│   │   │   │   │   ├── [01;32m009.png[00m
-│   │   │   │   │   ├── [01;32m010.png[00m
-│   │   │   │   │   ├── [01;32m011.png[00m
-│   │   │   │   │   ├── [01;32m012.png[00m
-│   │   │   │   │   ├── [01;32m013.png[00m
-│   │   │   │   │   ├── [01;32m014.png[00m
-│   │   │   │   │   ├── [01;32m015.png[00m
-│   │   │   │   │   ├── [01;32m016.png[00m
-│   │   │   │   │   ├── [01;32m017.png[00m
-│   │   │   │   │   ├── [01;32m018.png[00m
-│   │   │   │   │   ├── [01;32m019.png[00m
-│   │   │   │   │   └── [01;32mVITAS_Vision AI를 활용한 교차로 교통사고 방지 시스템.pdf[00m
-│   │   │   │   ├── [01;32mAIoT 서비스 디자인 경진대회  프로젝트 요약서.pdf[00m
-│   │   │   │   ├── [01;32mVITAS_Vision AI를 활용한 교차로 교통사고 방지 시스템.pptx[00m
-│   │   │   │   ├── [01;32m[제출2]AIoT 서비스 디자인 경진대회  프로젝트 요약서.hwp[00m
-│   │   │   │   └── [34;42m발표 사진[00m
-│   │   │   │       ├── [01;32m3. VITAS(1).jpg[00m
-│   │   │   │       ├── [01;32m3. VITAS(2).jpg[00m
-│   │   │   │       ├── [01;32m3. VITAS(3).jpg[00m
-│   │   │   │       ├── [01;32m3. VITAS(4).jpg[00m
-│   │   │   │       ├── [01;32m3. VITAS(5).jpg[00m
-│   │   │   │       ├── [01;32m3. VITAS(6).jpg[00m
-│   │   │   │       ├── [01;32m3. VITAS(7).jpg[00m
-│   │   │   │       └── [01;32m3. VITAS(8).jpg[00m
-│   │   │   ├── [34;42m교내 캡스톤디자인[00m
-│   │   │   │   ├── [01;32m22팀_VITAS_Vision AI를 활용한 교차로 교통사고 방지 시스템 ppt.pdf[00m
-│   │   │   │   ├── [01;32m22팀_VITAS_Vision AI를 활용한 교차로 교통사고 방지 시스템 결과보고서.pdf[00m
-│   │   │   │   └── [01;32m학교캡디.mp4[00m
-│   │   │   └── [34;42m한이음[00m
-│   │   │       ├── [01;32mVision AI를 활용한 교차로 교통사고 방지 시스템(개발보고서).pdf[00m
-│   │   │       ├── [01;32mVision AI를 활용한 교차로 교통사고 방지 시스템(제품설계서).pdf[00m
-│   │   │       └── [01;32m한이음 ICT 공모전7(0902).mp4[00m
 │   │   ├── [34;42m논문[00m
 │   │   │   └── [01;32mvol21_no1_7.pdf[00m
 │   │   ├── [34;42m상장[00m
@@ -1571,44 +1487,22 @@
 │   │               ├── [01;32mREAL_road_distance_30.py[00m
 │   │               ├── [01;32mREAL_road_distance_40.py[00m
 │   │               └── [01;32mREAL_road_distance_50.py[00m
-│   ├── [34;42mpapers[00m
-│   │   └── [01;32mvol21_no1_7.pdf[00m
-│   └── [34;42mreferences[00m
-├── [34;42mresults[00m
-│   ├── [34;42mclassifiers[00m
-│   │   ├── [34;42mgru[00m
-│   │   │   └── [34;42mtb_logs[00m
-│   │   ├── [34;42minception_v3[00m
-│   │   │   └── [34;42mtb_logs[00m
-│   │   └── [34;42mmlp[00m
-│   │       └── [34;42mtb_logs[00m
-│   ├── [34;42mgru[00m
-│   ├── [34;42minception_v3[00m
-│   ├── [34;42mmlp[00m
-│   ├── [34;42mspeed[00m
-│   └── [34;42mvideo[00m
-├── [34;42mscripts[00m
-├── [34;42mtests[00m
-│   └── [34;42mspeed_estimation[00m
-│       ├── [01;32mDCU_up.py[00m
-│       ├── [01;32mHRC_back.py[00m
-│       ├── [01;32mcop.py[00m
-│       ├── [01;32mdcu_refactored.py[00m
-│       ├── [01;32mfood.py[00m
-│       ├── [01;32mhrc.py[00m
-│       ├── [01;32mict_code(0831).py[00m
-│       ├── [01;32mict_code.py[00m
-│       ├── [01;32mmac.py[00m
-│       ├── [01;32mmedical_real.py[00m
-│       ├── [01;32mpy_test_316.py[00m
-│       ├── [01;32mreal_test.py[00m
-│       └── [01;32mtest3.py[00m
-├── [34;42mthird_party[00m
-└── [34;42mweights[00m
-    ├── [34;42mclassifiers[00m
-    │   ├── [34;42mgru[00m
-    │   ├── [34;42minception_v3[00m
-    │   └── [34;42mmlp[00m
-    └── [34;42myolo[00m
+│   └── [34;42mpapers[00m
+│       └── [01;32mvol21_no1_7.pdf[00m
+└── [34;42mtests[00m
+    └── [34;42mspeed_estimation[00m
+        ├── [01;32mDCU_up.py[00m
+        ├── [01;32mHRC_back.py[00m
+        ├── [01;32mcop.py[00m
+        ├── [01;32mdcu_refactored.py[00m
+        ├── [01;32mfood.py[00m
+        ├── [01;32mhrc.py[00m
+        ├── [01;32mict_code(0831).py[00m
+        ├── [01;32mict_code.py[00m
+        ├── [01;32mmac.py[00m
+        ├── [01;32mmedical_real.py[00m
+        ├── [01;32mpy_test_316.py[00m
+        ├── [01;32mreal_test.py[00m
+        └── [01;32mtest3.py[00m
 
-294 directories, 1317 files
+239 directories, 1266 files
