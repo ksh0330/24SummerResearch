@@ -2,3 +2,14 @@ data_root: datasets
 samples_dir: results/speed/samples
 weights:
   yolo: weights/yolov8n.pt
+
+# --- project-specific additions ---
+samples:
+  dcu_demo: results/speed/samples/DCU_30.mp4
+
+weights_ext:
+  yolo_default: weights/yolov8s.pt
+  yolo_epoch52: weights/epoch52.pt
+
+mlp:
+  csv_file: results/mlp/csv/mlp0624.csv
