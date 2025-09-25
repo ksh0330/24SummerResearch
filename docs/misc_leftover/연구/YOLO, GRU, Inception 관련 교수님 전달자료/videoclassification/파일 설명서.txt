@@ -1,0 +1,5 @@
+video classification은 학습 코드가 2개인데, 특징추출 속도가 너무 느림
+
+1. VideoClassificatio.py코드로 npy파일로 특징값을 저장
+2. GRU_Train코드로 npy를 통해서 GRU학습
+3. 정해진 비디오에서 특징값을 추출하여 GRU 추론

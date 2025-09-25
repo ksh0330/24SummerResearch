@@ -1,13 +1,14 @@
+from code.utils.paths import WEIGHTS, SAMPLES
 import sys
 import cv2 as cv
 import numpy as np
+import torch
+import time
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage, QPixmap
 from ultralytics import YOLO
 from collections import defaultdict, deque
-import torch
-import time
 
 class ViewTransformer:
     def __init__(self, source: np.ndarray, target: np.ndarray) -> None:

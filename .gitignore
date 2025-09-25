@@ -1,0 +1,5 @@
+
+# ignore Windows device file name & inventory
+NUL
+inventories/
+*tree.txt
