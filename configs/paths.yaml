@@ -1,0 +1,4 @@
+data_root: datasets
+samples_dir: results/speed/samples
+weights:
+  yolo: weights/yolov8n.pt
