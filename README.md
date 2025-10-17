@@ -32,58 +32,38 @@ Vision AI 기반 교차로 충돌 방지 시스템의 핵심 알고리즘 개발
 
 ```
 24SummerResearch/
-├── code/                    # 핵심 구현 코드
-│   ├── mlp/                # MLP 모델 관련
-│   │   ├── feature_extraction/  # 특징 추출
-│   │   └── training/       # 훈련 및 시각화
-│   ├── gru/                # GRU 모델 관련
-│   │   ├── training/       # 훈련 코드
+├── code/                    
+│   ├── mlp/                
+│   │   ├── feature_extraction/  
+│   │   └── training/       
+│   ├── gru/                
+│   │   ├── training/       
 │   │   ├── realtime_classification.py
 │   │   ├── realtime_classification_videotest.py
 │   │   └── VideoClassification.py
-│   └── yolo/               # YOLO 관련
-│       └── lstm/          # LSTM 코드 
-├── datasets/               # 모든 데이터
-│   ├── mlp_data/          # MLP CSV 데이터
-│   ├── gru_data/          # GRU NPY 데이터
-│   └── test_videos/       # 테스트 비디오
-├── results/               # 실험 결과
-│   ├── mlp_results/       # MLP 결과 그래프
-│   ├── gru_results/       # GRU 결과 그래프
-│   └── yolo_results/      # YOLO 결과 그래프 
-├── docs/                  # 연구참여일지 
+│   ├── yolo/               
+│   └── lstm/               
+├── datasets/               
+│   ├── mlp_data/          
+│   ├── gru_data/          
+│   └── test_videos/       
+├── results/               
+│   ├── mlp_results/       
+│   ├── gru_results/       
+│   └── yolo_results/      
+├── docs/                  
 │   └── research_participation_log(1-13).docx
-└── README.md              # 프로젝트 문서
+└── README.md              
 ```
 
 ---
 
-## 🚀 주요 파일 설명
+## 📋 주요 구성
 
-### MLP 관련
-- `mlp_main_feature_extraction.py`: A, B 영역 추적을 통한 속도 측정 및 CSV 변환
-- `mlp_improved_feature_extraction.py`: 평균 속도 제거 버전 (개선된 특징 추출)
-- `mlp_danger_feature_extraction.py`: 위험 상황 특징 추출
-- `mlp_safe_feature_extraction.py`: 안전 상황 특징 추출
-- `mlp_warn_feature_extraction.py`: 경고 상황 특징 추출
-- `mlp_classifier_training.py`: MLP 분류기 훈련
-
-### GRU 관련
-- `GRU_Train.py`: GRU 모델 훈련
-- `realtime_classification.py`: 실시간 분류
-- `realtime_classification_videotest.py`: 비디오 테스트용 실시간 분류
-- `VideoClassification.py`: 비디오 분류 메인 코드
-
-### YOLO 관련
-- `LSTM_train.py`: LSTM 모델 훈련
-- `Realtime_YOLO_LSTM_Video_roof.py`: 실시간 YOLO + LSTM 비디오 처리
-- `train.py`: YOLO 훈련
-- `VITAS.py`: VITAS 시스템 메인 코드
+- **MLP**: 속도 추정 및 위험도 분류 모델
+- **GRU**: 비디오 기반 실시간 위험 상황 분류
+- **YOLO**: 객체 탐지 모델
+- **LSTM**: 시계열 데이터 기반 위험도 예측
+- **Results**: 각 모델별 성능 분석 그래프
 
 ---
-
-## 🔗 관련 저장소
-
-- **[Project VITAS](https://github.com/ksh0330/Project-VITAS)** - 메인 허브 저장소
-- **[Speed-Estimation-YOLOv8](https://github.com/ksh0330/Speed-Estimation-YOLOv8)** - 핵심 속도 추정 알고리즘
-- **[2024 Hanium ICT Contest](https://github.com/ksh0330/2024_Hanium_ICT_Contest)** - 공모전 참가작
